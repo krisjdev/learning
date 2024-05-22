@@ -1,0 +1,95 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "make",  // or whatever build system you use
+            "args": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "rsync",
+            "type": "shell",
+            "command": "rsync",
+            "args": [
+            "-avz",
+            "--delete",
+            "${workspaceFolder}/bin",
+            "kris@rpi:/home/kris/repos/rpi-arm/"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "start-gdbserver",
+            "type": "shell",
+            "command": "ssh",
+            "args": [
+            "-t",
+            "kris@rpi",
+            // "gdbserver :1234 /home/kris/repos/rpi-arm/bin/${input:executableName}"
+            "gdbserver :1234 /home/kris/repos/rpi-arm/bin/a.out"
+            ],
+            "problemMatcher": {
+                "owner": "start-gdbserver-await-listening",
+                "fileLocation": "relative",
+                "pattern": {
+                    "regexp": "Listening on port \\d{4}|\\d{5}",
+                    "severity": 0
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^Listening on port \\d{4}|\\d{5}",
+                    "endsPattern": "^Listening on port \\d{4}|\\d{5}"
+                }
+            },
+            "isBackground": true,
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "stop-gdbserver",
+            "type": "shell",
+            "command": "ssh",
+            "args": [
+            "kris@rpi",
+            "pkill gdbserver",
+            "||", "echo", "0"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "echo": false,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "build-launch-remote-debugging",
+            "dependsOn": ["build", "rsync", "start-gdbserver"],
+            "problemMatcher": [],
+            "dependsOrder": "sequence"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "executableName",
+            "type": "promptString",
+            "description": "Enter the name of the executable",
+            "default": "a"
+        }
+    ]
+  }
+  
