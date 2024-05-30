@@ -1,0 +1,4 @@
+{
+    // https://github.com/Microsoft/vscode/issues/23757#issuecomment-1422167514
+    "workspaceKeyBindings.runDebugTaskWithF5.enabled": true
+}
