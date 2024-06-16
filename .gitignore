@@ -1,2 +1,11 @@
 bin/
 .vscode/
+*.bak
+
+# ignore quartus files
+*.qws
+*_description.txt
+*_pin_model_dump.txt
+incremental_db/
+db/
+output_files/
